@@ -371,6 +371,8 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                     antennaRfConfig.setTransmitPowerIndex(powerLevel);
                     this.rfidReaderDevice.getRFIDReader().Config.Antennas.setAntennaRfConfig(1, antennaRfConfig);
                 }
+                WritableMap event = Arguments.createMap();
+                event.putString("SettingEvent", "Setting Completed");
                 Log.i("RFID", "Setting antennas completed");
             }
         } catch (InvalidUsageException e) {
