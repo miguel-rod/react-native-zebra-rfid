@@ -359,6 +359,30 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         }
     }
 
+    public void setting(int powerLevel) {
+        String err = null;
+        try {
+            if (this.rfidReaderDevice != null) {
+                Antennas.AntennaRfConfig antennaRfConfig = this.rfidReaderDevice.getRFIDReader().Config.Antennas.getAntennaRfConfig(1);
+                Log.i("RFID","ori config: " +antennaRfConfig);
+                if(powerLevel != antennaRfConfig.getTransmitPowerIndex()) {
+                    antennaRfConfig.setrfModeTableIndex(4);
+                    antennaRfConfig.setTari(270);
+                    antennaRfConfig.setTransmitPowerIndex(powerLevel);
+                    this.rfidReaderDevice.getRFIDReader().Config.Antennas.setAntennaRfConfig(1, antennaRfConfig);
+                }
+                Log.i("RFID", "Setting antennas completed");
+            }
+        } catch (InvalidUsageException e) {
+            err = e.getMessage();
+        } catch (OperationFailureException e) {
+            err = e.getMessage();
+        }
+        if (err != null) {
+            Log.e("RFID", err);
+        }
+    }
+
     @Override
     public void eventReadNotify(RfidReadEvents rfidReadEvents) {
         // reader not active
