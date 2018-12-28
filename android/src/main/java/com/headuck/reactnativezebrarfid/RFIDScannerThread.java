@@ -367,7 +367,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 Log.i("RFID","ori config: " +antennaRfConfig);
                 if(powerLevel != antennaRfConfig.getTransmitPowerIndex()) {
                     antennaRfConfig.setrfModeTableIndex(4);
-                    antennaRfConfig.setTari(270);
+                    antennaRfConfig.setTari(0);
                     antennaRfConfig.setTransmitPowerIndex(powerLevel);
                     this.rfidReaderDevice.getRFIDReader().Config.Antennas.setAntennaRfConfig(1, antennaRfConfig);
                 }
