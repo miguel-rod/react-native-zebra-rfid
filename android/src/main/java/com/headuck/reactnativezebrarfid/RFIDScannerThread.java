@@ -374,9 +374,9 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 Log.i("RFID", "Setting antennas completed");
             }
         } catch (InvalidUsageException e) {
-            err = e.getMessage();
+            err = "Setting Invalid error " + e.getMessage();
         } catch (OperationFailureException e) {
-            err = e.getMessage();
+            err = "Setting Operation error " + e.getMessage();
         }
         if (err != null) {
             Log.e("RFID", err);
