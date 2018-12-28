@@ -373,6 +373,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 }
                 WritableMap event = Arguments.createMap();
                 event.putString("SettingEvent", "Setting Completed");
+                Log.i("RFID","" + event);
                 this.dispatchEvent("SettingEvent", event);
                 Log.i("RFID", "Setting antennas completed");
             }
