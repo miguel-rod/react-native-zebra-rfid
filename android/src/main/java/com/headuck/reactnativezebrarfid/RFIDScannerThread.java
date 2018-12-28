@@ -373,6 +373,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 }
                 WritableMap event = Arguments.createMap();
                 event.putString("SettingEvent", "Setting Completed");
+                this.dispatchEvent("SettingEvent", event);
                 Log.i("RFID", "Setting antennas completed");
             }
         } catch (InvalidUsageException e) {
@@ -382,6 +383,9 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         }
         if (err != null) {
             Log.e("RFID", err);
+            WritableMap event = Arguments.createMap();
+            event.putString("SettingEvent", "Setting Failed");
+            this.dispatchEvent("SettingEvent", event);
         }
     }
 
