@@ -118,9 +118,9 @@ public class RFIDScannerManager extends ReactContextBaseJavaModule implements Li
     }
 
     @ReactMethod
-    public void setting(int powerLevel) {
+    public void settingAntennas(int powerLevel) {
         if (this.scannerthread != null) {
-            this.scannerthread.setting(powerLevel);
+            this.scannerthread.settingAntennas(powerLevel);
         }
     }
 

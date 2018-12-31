@@ -359,7 +359,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         }
     }
 
-    public void setting(int powerLevel) {
+    public void settingAntennas(int powerLevel) {
         String err = null;
         try {
             if (this.rfidReaderDevice != null) {
