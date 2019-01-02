@@ -124,4 +124,11 @@ public class RFIDScannerManager extends ReactContextBaseJavaModule implements Li
         }
     }
 
+    @ReactMethod
+    public void settingBeeper(String beeperVolume) {
+        if (this.scannerthread != null) {
+            this.scannerthread.settingBeeper(beeperVolume);
+        }
+    }
+
 }

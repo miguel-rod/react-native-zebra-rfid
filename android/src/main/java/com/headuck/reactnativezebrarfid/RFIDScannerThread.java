@@ -372,7 +372,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                     this.rfidReaderDevice.getRFIDReader().Config.Antennas.setAntennaRfConfig(1, antennaRfConfig);
                 }
                 WritableMap event = Arguments.createMap();
-                event.putString("SettingEvent", "Setting Completed");
+                event.putString("SettingEvent", "Setting Antennas Completed");
                 Log.i("RFID","" + event);
                 this.dispatchEvent("SettingEvent", event);
                 Log.i("RFID", "Setting antennas completed");
@@ -385,7 +385,45 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         if (err != null) {
             Log.e("RFID", err);
             WritableMap event = Arguments.createMap();
-            event.putString("SettingEvent", "Setting Failed");
+            event.putString("SettingEvent", "Setting Antennas Failed");
+            this.dispatchEvent("SettingEvent", event);
+        }
+    }
+
+    public void settingBeeper(String beeperVolume) {
+        String err = null;
+        try {
+            if (this.rfidReaderDevice != null && beeperVolume != null) {
+                BEEPER_VOLUME oribeeperVolume = this.rfidReaderDevice.getRFIDReader().Config.getBeeperVolume();
+                switch (beeperVolume) {
+                    case "HIGH":
+                        this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.HIGH_BEEP);
+                        break;
+                    case "MEDIUM":
+                        this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.MEDIUM_BEEP);
+                        break;
+                    case "LOW":
+                        this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.LOW_BEEP);
+                        break;
+                    case "QUIET":
+                        this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.QUIET_BEEP);
+                        break;
+                }
+                WritableMap event = Arguments.createMap();
+                event.putString("SettingEvent", "Setting Bepper Completed");
+                Log.i("RFID","" + event);
+                this.dispatchEvent("SettingEvent", event);
+                Log.i("RFID", "Setting bepper completed");
+            }
+        } catch (InvalidUsageException e) {
+            err = "Setting Invalid error " + e.getMessage();
+        } catch (OperationFailureException e) {
+            err = "Setting Operation error " + e.getMessage();
+        }
+        if (err != null) {
+            Log.e("RFID", err);
+            WritableMap event = Arguments.createMap();
+            event.putString("SettingEvent", "Setting Beeper Failed");
             this.dispatchEvent("SettingEvent", event);
         }
     }
