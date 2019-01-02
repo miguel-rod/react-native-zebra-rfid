@@ -393,10 +393,12 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
     public void gettingBeeper() {
         String err = null;
         try {
-            BEEPER_VOLUME oribeeperVolume = this.rfidReaderDevice.getRFIDReader().Config.getBeeperVolume();
-            WritableMap event = Arguments.createMap();
-            event.putString("SettingEvent", oribeeperVolume.toString());
-            this.dispatchEvent("SettingEvent", event);
+            if (this.rfidReaderDevice != null) {
+                BEEPER_VOLUME oribeeperVolume = this.rfidReaderDevice.getRFIDReader().Config.getBeeperVolume();
+                WritableMap event = Arguments.createMap();
+                event.putString("SettingEvent", oribeeperVolume.toString());
+                this.dispatchEvent("SettingEvent", event);
+            }
         } catch (InvalidUsageException e) {
             err = "Setting Invalid error " + e.getMessage();
         } catch (OperationFailureException e) {
