@@ -62,7 +62,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 ReaderDevice readerDevice = availableRFIDReaderList.get(0);
                 RFIDReader rfidReader = readerDevice.getRFIDReader();
                 // Connect to RFID reader
-
+                Log.v("RFID", "Available rfid reader : " + rfidReader);
                 if (rfidReader != null) {
                     while (true) {
                         try {
