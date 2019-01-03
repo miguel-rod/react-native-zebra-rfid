@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.zebra.rfid.api3.InvalidUsageException;
 import com.zebra.rfid.api3.OperationFailureException;
@@ -22,11 +23,19 @@ import java.util.ArrayList;
 
 public class RFIDScannerAsync extends AsyncTask<Object, String, String> {
 
+    private RFIDScannerThread scannerthread;
+    private Readers readers = null;
+    private ArrayList<ReaderDevice> deviceList = null;
+    private ReaderDevice rfidReaderDevice = null;
+    boolean tempDisconnected = false;
+    private Boolean reading = false;
+    private ReadableMap config = null;
+
     protected String doInBackground(Object... objects) {
         String err = null;
         if (objects[0] != null) {
             if (((ReaderDevice) objects[0]).getRFIDReader().isConnected())
-            return "disconnect";
+            disconnect();
         }
         try {
 
@@ -57,7 +66,7 @@ public class RFIDScannerAsync extends AsyncTask<Object, String, String> {
                         try {
                             rfidReader.connect();
                             rfidReader.Config.getDeviceStatus(true, false, false);
-                            //rfidReader.Events.addEventsListener(this);
+                            rfidReader.Events.addEventsListener(scannerthread);
                             // Subscribe required status notification
                             rfidReader.Events.setInventoryStartEvent(true);
                             rfidReader.Events.setInventoryStopEvent(true);
@@ -119,12 +128,12 @@ public class RFIDScannerAsync extends AsyncTask<Object, String, String> {
                 }
                 if (err == null) {
                     // Connect success
-                    //rfidReaderDevice = readerDevice;
-                    //tempDisconnected = false;
+                    rfidReaderDevice = readerDevice;
+                    tempDisconnected = false;
                     WritableMap event = Arguments.createMap();
                     event.putString("RFIDStatusEvent", "opened");
-                    //this.dispatchEvent("RFIDStatusEvent", event);
-                    Log.i("RFID", "Connected to " + readerDevice.getName());
+                    scannerthread.dispatchEvent("RFIDStatusEvent", event);
+                    Log.i("RFID", "Connected to " + rfidReaderDevice.getName());
                     return "success";
                 }
             } else {
@@ -147,6 +156,47 @@ public class RFIDScannerAsync extends AsyncTask<Object, String, String> {
         triggerInfo.StopTrigger.setTriggerType(STOP_TRIGGER_TYPE.STOP_TRIGGER_TYPE_IMMEDIATE);
         reader.Config.setStartTrigger(triggerInfo.StartTrigger);
         reader.Config.setStopTrigger(triggerInfo.StopTrigger);
+    }
+
+    private void disconnect() {
+
+        if (this.rfidReaderDevice != null){
+            RFIDReader rfidReader = rfidReaderDevice.getRFIDReader();
+            String err = null;
+            if (!rfidReader.isConnected()) {
+                Log.i("RFID", "disconnect: already disconnected");
+                // already disconnected
+            } else {
+                try {
+                    rfidReader.disconnect();
+                } catch (InvalidUsageException e) {
+                    err = "disconnect: invalid usage error: " + e.getMessage();
+                } catch (OperationFailureException ex) {
+                    err = "disconnect: " + ex.getResults().toString();
+                }
+            }
+            try {
+                if (rfidReader.Events != null) {
+                    rfidReader.Events.removeEventsListener(scannerthread);
+                }
+            } catch (InvalidUsageException e) {
+                err = "disconnect: invalid usage error when removing events: " + e.getMessage();
+            } catch (OperationFailureException ex) {
+                err = "disconnect: error removing events: " + ex.getResults().toString();
+            }
+            if (err != null) {
+                Log.e("RFID", err);
+            }
+            // Ignore error and send feedback
+            WritableMap event = Arguments.createMap();
+            event.putString("RFIDStatusEvent", "closed");
+            scannerthread.dispatchEvent("RFIDStatusEvent", event);
+            rfidReaderDevice = null;
+            tempDisconnected = false;
+        } else {
+            Log.w("RFID", "disconnect: no device was connected");
+        }
+
     }
 
     protected void onProgressUpdate(Integer... progress) {
