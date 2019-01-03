@@ -257,6 +257,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         rfscan.execute(this.rfidReaderDevice, this.readers);
         Log.v("RFID", "STATUS " + rfscan.getStatus());
         this.rfidReaderDevice = rfscan.getRederDevice();
+        Log.i("RFID", "" +rfscan.getRederDevice());
         // this.connect();
     }
 
