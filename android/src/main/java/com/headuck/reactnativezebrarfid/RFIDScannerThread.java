@@ -253,7 +253,8 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         }
         tempDisconnected = false;
         reading = false;
-        new RFIDScannerAsync().execute(this.rfidReaderDevice, this.readers);
+        new RFIDScannerAsync().execute(this.rfidReaderDevice, this.readers).getStatus();
+
         // this.connect();
     }
 
