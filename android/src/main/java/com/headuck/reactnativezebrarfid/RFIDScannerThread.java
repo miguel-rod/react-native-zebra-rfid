@@ -155,6 +155,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
      */
     private void setTriggerImmediate(RFIDReader reader) throws InvalidUsageException, OperationFailureException {
         TriggerInfo triggerInfo = new TriggerInfo();
+        reader.Events.addEventsListener(this);
         // Start trigger: set to immediate mode
         triggerInfo.StartTrigger.setTriggerType(START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE);
         // Stop trigger: set to immediate mode
@@ -237,8 +238,8 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         shutdown();
     }
 
-    private class connectAsync extends AsyncTask<Object, Void, String> {
-        protected String doInBackground(Object... objects) {
+    private class connectAsync extends AsyncTask<Object, Void, ReaderDevice> {
+        protected ReaderDevice doInBackground(Object... objects) {
             String err = null;
             if (rfidReaderDevice != null) {
                 if (rfidReaderDevice.getRFIDReader().isConnected())
@@ -271,10 +272,9 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                     if (rfidReader != null) {
                         while (true) {
                             try {
-                                RFIDScannerThread rf = null;
                                 rfidReader.connect();
                                 rfidReader.Config.getDeviceStatus(true, false, false);
-                                rfidReader.Events.addEventsListener(rf);
+                                //rfidReader.Events.addEventsListener(this);
                                 // Subscribe required status notification
                                 rfidReader.Events.setInventoryStartEvent(true);
                                 rfidReader.Events.setInventoryStopEvent(true);
@@ -336,12 +336,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                     }
                     if (err == null) {
                         // Connect success
-                        rfidReaderDevice = readerDevice;
-                        tempDisconnected = false;
-                        WritableMap event = Arguments.createMap();
-                        event.putString("RFIDStatusEvent", "opened");
-                        dispatchEvent("RFIDStatusEvent", event);
-                        Log.i("RFID", "Connected to " + rfidReaderDevice.getName());
+                        return readerDevice;
 
                     }
                 } else {
@@ -353,15 +348,21 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
             if (err != null) {
                 Log.e("RFID", err);
             }
-            return "";
+            return null;
         }
 
         protected void onProgressUpdate(Integer... progress) {
             // optionally report progress
         }
 
-        protected void onPostExecute(Long result) {
+        protected void onPostExecute(ReaderDevice result) {
             // do something on the UI thread
+            rfidReaderDevice = result;
+            tempDisconnected = false;
+            WritableMap event = Arguments.createMap();
+            event.putString("RFIDStatusEvent", "opened");
+            dispatchEvent("RFIDStatusEvent", event);
+            Log.i("RFID", "Connected to " + rfidReaderDevice.getName());
         }
     }
 
