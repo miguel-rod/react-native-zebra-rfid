@@ -15,6 +15,8 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import static android.os.AsyncTask.SERIAL_EXECUTOR;
+
 public abstract class RFIDScannerThread extends Thread implements RfidEventsListener {
 
     private ReactApplicationContext context;
@@ -386,7 +388,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         tempDisconnected = false;
         reading = false;
         connectAsync connAsync = new connectAsync();
-        connAsync.execute(this.rfidReaderDevice, this.readers);
+        connAsync.executeOnExecutor(SERIAL_EXECUTOR,this.rfidReaderDevice, this.readers);
         // this.connect();
     }
 
@@ -416,7 +418,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
 
     public void shutdown() {
         shutdownAsync shutdownAsync = new shutdownAsync();
-        shutdownAsync.execute();
+        shutdownAsync.executeOnExecutor(SERIAL_EXECUTOR);
     }
 
     public void read(ReadableMap config) {
