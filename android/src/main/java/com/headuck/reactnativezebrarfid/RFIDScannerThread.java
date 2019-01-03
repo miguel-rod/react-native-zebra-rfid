@@ -358,12 +358,13 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         protected void onPostExecute(ReaderDevice result) {
             // do something on the UI thread
             rfidReaderDevice = result;
-            Log.i("RFID", "" + rfidReaderDevice);
-            tempDisconnected = false;
-            WritableMap event = Arguments.createMap();
-            event.putString("RFIDStatusEvent", "opened");
-            dispatchEvent("RFIDStatusEvent", event);
-            Log.i("RFID", "Connected to " + rfidReaderDevice.getName());
+            if (rfidReaderDevice != null) {
+                tempDisconnected = false;
+                WritableMap event = Arguments.createMap();
+                event.putString("RFIDStatusEvent", "opened");
+                dispatchEvent("RFIDStatusEvent", event);
+                Log.i("RFID", "Connected to " + rfidReaderDevice.getName());
+            }
         }
     }
 
