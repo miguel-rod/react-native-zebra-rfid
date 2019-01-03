@@ -385,21 +385,38 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         }
         tempDisconnected = false;
         reading = false;
-        connectAsync rfscan = new connectAsync();
-        rfscan.execute(this.rfidReaderDevice, this.readers).getStatus();
+        connectAsync connAsync = new connectAsync();
+        connAsync.execute(this.rfidReaderDevice, this.readers);
         // this.connect();
     }
 
+    private class shutdownAsync extends AsyncTask<Object, Void, String>{
+        protected String doInBackground(Object... objects) {
+            if (rfidReaderDevice != null) {
+                disconnect();
+            }
+            // Unregister receiver
+            if (readers != null) {
+                readers.Dispose();
+                readers = null;
+            }
+            deviceList = null;
+            return "";
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            // optionally report progress
+        }
+
+        protected void onPostExecute(String result) {
+            // do something on the UI thread
+
+        }
+    }
+
     public void shutdown() {
-        if (this.rfidReaderDevice != null) {
-            disconnect();
-        }
-        // Unregister receiver
-        if (readers != null) {
-            readers.Dispose();
-            readers = null;
-        }
-        deviceList = null;
+        shutdownAsync shutdownAsync = new shutdownAsync();
+        shutdownAsync.execute();
     }
 
     public void read(ReadableMap config) {
