@@ -205,7 +205,6 @@ public class RFIDScannerAsync extends AsyncTask<Object, String, String> {
 
     protected void onPostExecute(Long result) {
         // do something on the UI thread
-
     }
 
     public ReaderDevice getRederDevice(){
