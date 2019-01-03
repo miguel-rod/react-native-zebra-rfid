@@ -124,7 +124,7 @@ public class RFIDScannerAsync extends AsyncTask<Object, String, String> {
                     WritableMap event = Arguments.createMap();
                     event.putString("RFIDStatusEvent", "opened");
                     //this.dispatchEvent("RFIDStatusEvent", event);
-                    Log.i("RFID", "Connected to " + ((ReaderDevice) objects[0]).getName());
+                    Log.i("RFID", "Connected to " + readerDevice.getName());
                     return "success";
                 }
             } else {
