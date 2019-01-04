@@ -171,6 +171,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         if (this.rfidReaderDevice != null){
             RFIDReader rfidReader = rfidReaderDevice.getRFIDReader();
             String err = null;
+            Log.v("RFID", "disconnected");
             if (!rfidReader.isConnected()) {
                 Log.i("RFID", "disconnect: already disconnected");
                 // already disconnected
