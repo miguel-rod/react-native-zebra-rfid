@@ -577,21 +577,23 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         try {
             if (this.rfidReaderDevice != null && beeperVolume != null) {
                 BEEPER_VOLUME oribeeperVolume = this.rfidReaderDevice.getRFIDReader().Config.getBeeperVolume();
-                switch (beeperVolume) {
-                    case "HIGH":
-                        this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.HIGH_BEEP);
-                        break;
-                    case "MEDIUM":
-                        this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.MEDIUM_BEEP);
-                        break;
-                    case "LOW":
-                        this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.LOW_BEEP);
-                        break;
-                    case "QUIET":
-                        this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.QUIET_BEEP);
-                        break;
+                if (beeperVolume != oribeeperVolume.toString()) {
+                    switch (beeperVolume) {
+                        case "HIGH":
+                            this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.HIGH_BEEP);
+                            break;
+                        case "MEDIUM":
+                            this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.MEDIUM_BEEP);
+                            break;
+                        case "LOW":
+                            this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.LOW_BEEP);
+                            break;
+                        case "QUIET":
+                            this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.QUIET_BEEP);
+                            break;
+                    }
+                    this.rfidReaderDevice.getRFIDReader().Config.saveConfig();
                 }
-                this.rfidReaderDevice.getRFIDReader().Config.saveConfig();
                 WritableMap event = Arguments.createMap();
                 event.putString("SettingEvent", "Setting Bepper Completed");
                 Log.i("RFID","" + event);
