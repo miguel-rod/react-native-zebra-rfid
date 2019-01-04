@@ -523,6 +523,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                     antennaRfConfig.setTari(0);
                     antennaRfConfig.setTransmitPowerIndex(powerLevel);
                     this.rfidReaderDevice.getRFIDReader().Config.Antennas.setAntennaRfConfig(1, antennaRfConfig);
+                    this.rfidReaderDevice.getRFIDReader().Config.saveConfig();
                 }
                 WritableMap event = Arguments.createMap();
                 event.putString("SettingEvent", "Setting Antennas Completed");
@@ -587,6 +588,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                         this.rfidReaderDevice.getRFIDReader().Config.setBeeperVolume(BEEPER_VOLUME.QUIET_BEEP);
                         break;
                 }
+                this.rfidReaderDevice.getRFIDReader().Config.saveConfig();
                 WritableMap event = Arguments.createMap();
                 event.putString("SettingEvent", "Setting Bepper Completed");
                 Log.i("RFID","" + event);
