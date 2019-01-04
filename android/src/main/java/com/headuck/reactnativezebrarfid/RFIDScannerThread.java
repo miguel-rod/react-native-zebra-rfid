@@ -403,6 +403,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 readers = null;
             }
             deviceList = null;
+            Log.v("RFID","shutdown " + rfidReaderDevice);
             return "";
         }
 
