@@ -242,6 +242,21 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
 
     private class connectAsync extends AsyncTask<Object, Void, ReaderDevice> {
         protected ReaderDevice doInBackground(Object... objects) {
+            Log.v("RFID", "init");
+            readers = new Readers(context, ENUM_TRANSPORT.BLUETOOTH);
+            try {
+                ArrayList<ReaderDevice> availableRFIDReaderList = readers.GetAvailableRFIDReaderList();
+                Log.v("RFID", "Available number of reader : " + availableRFIDReaderList.size());
+                deviceList = availableRFIDReaderList;
+
+                Log.v("RFID", "Scanner thread initialized");
+            } catch (InvalidUsageException e) {
+                Log.e("RFID", "Init scanner error - invalid message: " + e.getMessage());
+            } catch (NullPointerException ex) {
+                Log.e("RFID", "Blue tooth not support on device");
+            }
+            reading = false;
+
             String err = null;
             if (rfidReaderDevice != null) {
                 if (rfidReaderDevice.getRFIDReader().isConnected())
@@ -372,21 +387,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
 
     public void init(Context context) {
         // Register receiver
-        Log.v("RFID", "init");
-        readers = new Readers(context, ENUM_TRANSPORT.BLUETOOTH);
-        try {
-            ArrayList<ReaderDevice> availableRFIDReaderList = readers.GetAvailableRFIDReaderList();
-            Log.v("RFID", "Available number of reader : " + availableRFIDReaderList.size());
-            deviceList = availableRFIDReaderList;
 
-            Log.v("RFID", "Scanner thread initialized");
-        } catch (InvalidUsageException e) {
-            Log.e("RFID", "Init scanner error - invalid message: " + e.getMessage());
-        } catch (NullPointerException ex) {
-            Log.e("RFID", "Blue tooth not support on device");
-        }
-        tempDisconnected = false;
-        reading = false;
         connectAsync connAsync = new connectAsync();
         connAsync.executeOnExecutor(SERIAL_EXECUTOR,this.rfidReaderDevice, this.readers);
         // this.connect();
