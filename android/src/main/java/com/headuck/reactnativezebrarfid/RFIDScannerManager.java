@@ -16,7 +16,7 @@ public class RFIDScannerManager extends ReactContextBaseJavaModule implements Li
 
     public final ReactApplicationContext context;
 
-    private RFIDScannerThread scannerthread = null;
+    private RFIDScannerThread scannerThread = null;
 
     public RFIDScannerManager(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -24,7 +24,7 @@ public class RFIDScannerManager extends ReactContextBaseJavaModule implements Li
         this.context = reactContext;
         this.context.addLifecycleEventListener(this);
 
-        this.scannerthread = new RFIDScannerThread(this.context) {
+        this.scannerThread = new RFIDScannerThread(this.context) {
 
             @Override
             public void dispatchEvent(String name, WritableMap data) {
@@ -42,7 +42,7 @@ public class RFIDScannerManager extends ReactContextBaseJavaModule implements Li
             }
 
         };
-        scannerthread.start();
+        scannerThread.start();
 
         Log.v("RFID", "RFIDScannerManager created");
 
@@ -56,85 +56,85 @@ public class RFIDScannerManager extends ReactContextBaseJavaModule implements Li
 
     @Override
     public void onHostResume() {
-        if (this.scannerthread != null) {
-            this.scannerthread.onHostResume();
+        if (this.scannerThread != null) {
+            this.scannerThread.onHostResume();
         }
     }
 
     @Override
     public void onHostPause() {
-        if (this.scannerthread != null) {
-            this.scannerthread.onHostPause();
+        if (this.scannerThread != null) {
+            this.scannerThread.onHostPause();
         }
     }
 
     @Override
     public void onHostDestroy() {
-        if (this.scannerthread != null) {
-            this.scannerthread.onHostDestroy();
+        if (this.scannerThread != null) {
+            this.scannerThread.onHostDestroy();
         }
     }
 
     @Override
     public void onCatalystInstanceDestroy() {
-        if (this.scannerthread != null) {
-            this.scannerthread.onCatalystInstanceDestroy();
+        if (this.scannerThread != null) {
+            this.scannerThread.onCatalystInstanceDestroy();
         }
     }
 
     @ReactMethod
     public void init() {
-        if (this.scannerthread != null) {
-            this.scannerthread.init(context);
+        if (this.scannerThread != null) {
+            this.scannerThread.init(context);
         }
     }
 
     @ReactMethod
     public void reconnect() {
-        if (this.scannerthread != null) {
-            this.scannerthread.reconnect();
+        if (this.scannerThread != null) {
+            this.scannerThread.reconnect();
         }
     }
 
     @ReactMethod
     public void read(ReadableMap config) {
-        if (this.scannerthread != null) {
-            this.scannerthread.read(config);
+        if (this.scannerThread != null) {
+            this.scannerThread.read(config);
         }
     }
 
     @ReactMethod
     public void cancel() {
-        if (this.scannerthread != null) {
-            this.scannerthread.cancel();
+        if (this.scannerThread != null) {
+            this.scannerThread.cancel();
         }
     }
 
     @ReactMethod
     public void shutdown() {
-        if (this.scannerthread != null) {
-            this.scannerthread.shutdown();
+        if (this.scannerThread != null) {
+            this.scannerThread.shutdown();
         }
     }
 
     @ReactMethod
     public void settingAntennas(int powerLevel) {
-        if (this.scannerthread != null) {
-            this.scannerthread.settingAntennas(powerLevel);
+        if (this.scannerThread != null) {
+            this.scannerThread.settingAntennas(powerLevel);
         }
     }
 
     @ReactMethod
     public void settingBeeper(String beeperVolume) {
-        if (this.scannerthread != null) {
-            this.scannerthread.settingBeeper(beeperVolume);
+        if (this.scannerThread != null) {
+            this.scannerThread.settingBeeper(beeperVolume);
         }
     }
 
     @ReactMethod
     public void gettingBeeper() {
-        if (this.scannerthread != null) {
-            this.scannerthread.gettingBeeper();
+        if (this.scannerThread != null) {
+            this.scannerThread.gettingBeeper();
         }
     }
 
