@@ -28,12 +28,10 @@
   ],
   "license": "MIT",
   "main": "index.js",
-  "maintainers": [
-    {
-      "name": "headuck",
-      "email": "headuck@no-reply.github.com"
-    }
-  ],
+  "maintainers": [{
+    "name": "headuck",
+    "email": "headuck@no-reply.github.com"
+  }],
   "name": "react-native-zebra-rfid",
   "optionalDependencies": {},
   "readme": "ERROR: No README data found!",
@@ -45,5 +43,5 @@
     "lint": "eslint *.js **/*.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "0.0.1"
+  "version": "0.0.2"
 }
