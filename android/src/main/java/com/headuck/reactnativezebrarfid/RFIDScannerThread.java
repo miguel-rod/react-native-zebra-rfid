@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.lang.NullPointerException;
+import android.util.JsonReader;
 
 import com.zebra.rfid.api3.*;
 
@@ -94,7 +95,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                                     boolean regionSet = false;
                                     for (int i = 0; i < len; i++) {
                                         RegionInfo regionInfo = regions.getRegionInfo(i);
-                                        if ("HKG".equals(regionInfo.getRegionCode())) {
+                                        if ("USA".equals(regionInfo.getRegionCode())) {
                                             regulatoryConfig.setRegion(regionInfo.getRegionCode());
                                             rfidReader.Config.setRegulatoryConfig(regulatoryConfig);
                                             Log.i("RFID", "Region set to " + regionInfo.getName());
@@ -315,7 +316,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                                         boolean regionSet = false;
                                         for (int i = 0; i < len; i++) {
                                             RegionInfo regionInfo = regions.getRegionInfo(i);
-                                            if ("HKG".equals(regionInfo.getRegionCode())) {
+                                            if ("USA".equals(regionInfo.getRegionCode())) {
                                                 regulatoryConfig.setRegion(regionInfo.getRegionCode());
                                                 rfidReader.Config.setRegulatoryConfig(regulatoryConfig);
                                                 Log.i("RFID", "Region set to " + regionInfo.getName());
@@ -621,7 +622,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
 
         TagDataArray tagArray = rfidReader.Actions.getReadTagsEx(1000);
         if (tagArray != null) {
-            WritableArray rfidTags = Arguments.createArray();
+            //WritableArray rfidTags = Arguments.createArray();
             for (int i = 0; i < tagArray.getLength(); i++) {
                 TagData tag = tagArray.getTags()[i];
 
@@ -631,10 +632,13 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 } else {
                     Log.w ("RFID", "opcode " + tag.getOpCode().toString());
                 }
-                this.dispatchEvent("TagEvent", tag.getTagID());
-                rfidTags.pushString(tag.getTagID());
+                JSONObject tagPayload = new JSONObject();
+                    tagPayload.put("tag",tag.getTagID());
+                    tagPayload.put("distance",tag.LocationInfo.getRelativeDistance());
+                this.dispatchEvent("TagEvent", tagPayload);
+                //rfidTags.pushString(tag.getTagID());
             }
-            this.dispatchEvent("TagsEvent", rfidTags);
+            //this.dispatchEvent("TagsEvent", rfidTags);
         }
     }
 
