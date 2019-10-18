@@ -1,7 +1,7 @@
 package com.headuck.reactnativezebrarfid;
 
 import android.util.Log;
-
+import org.json.JSONObject;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -33,6 +33,11 @@ public class RFIDScannerManager extends ReactContextBaseJavaModule implements Li
 
             @Override
             public void dispatchEvent(String name, String data) {
+                RFIDScannerManager.this.context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(name, data);
+            }
+
+            @Override
+            public void dispatchEvent(String name, JSONObject data) {
                 RFIDScannerManager.this.context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(name, data);
             }
 
@@ -97,9 +102,9 @@ public class RFIDScannerManager extends ReactContextBaseJavaModule implements Li
     }
 
     @ReactMethod
-    public void read(ReadableMap config) {
+    public void read(ReadableMap config,String tag) {
         if (this.scannerThread != null) {
-            this.scannerThread.read(config);
+            this.scannerThread.read(config,tag);
         }
     }
 
