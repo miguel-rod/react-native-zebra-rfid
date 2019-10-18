@@ -6,7 +6,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.lang.NullPointerException;
-import android.util.JsonReader;
+import org.json.JSONObject;
+import org.json.JSONException;
 
 import com.zebra.rfid.api3.*;
 
@@ -211,6 +212,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
 
     public abstract void dispatchEvent(String name, WritableMap data);
     public abstract void dispatchEvent(String name, String data);
+    public abstract void dispatchEvent(String name, JSONObject data);
     public abstract void dispatchEvent(String name, WritableArray data);
 
     public void onHostResume() {
@@ -425,7 +427,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         shutdownAsync.executeOnExecutor(SERIAL_EXECUTOR);
     }
 
-    public void read(ReadableMap config) {
+    public void read(ReadableMap config, String locateTag) {
         if (this.reading) {
             Log.e("RFID", "already reading");
             return;
@@ -438,7 +440,13 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 RFIDReader rfidReader = rfidReaderDevice.getRFIDReader();
                 try {
                     // Perform inventory
-                    rfidReader.Actions.Inventory.perform(null, null, null);
+                    if(locateTag != null){
+                        rfidReader.Actions.TagLocationing.Perform(locateTag,null,null);
+
+                    } else {
+                        rfidReader.Actions.Inventory.perform(null, null, null);
+                    }
+                    
                     reading = true;
                 } catch (InvalidUsageException e) {
                     err = "read: invalid usage error on scanner read: " + e.getMessage();
@@ -616,6 +624,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
 
     @Override
     public void eventReadNotify(RfidReadEvents rfidReadEvents) {
+
         // reader not active
         if (rfidReaderDevice == null) return;
         RFIDReader rfidReader = rfidReaderDevice.getRFIDReader();
@@ -632,9 +641,12 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 } else {
                     Log.w ("RFID", "opcode " + tag.getOpCode().toString());
                 }
+                short dist = tag.LocationInfo.getRelativeDistance();
+                Log.d("RFID", "Tag relative distance " + dist);
                 JSONObject tagPayload = new JSONObject();
                     tagPayload.put("tag",tag.getTagID());
-                    tagPayload.put("distance",tag.LocationInfo.getRelativeDistance());
+                    tagPayload.put("distance",dist);
+                Log.i("RFID", "Payload = " + tagPayload);
                 this.dispatchEvent("TagEvent", tagPayload);
                 //rfidTags.pushString(tag.getTagID());
             }
