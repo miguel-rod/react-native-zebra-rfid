@@ -29,6 +29,7 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
     boolean tempDisconnected = false;
     private Boolean reading = false;
     private ReadableMap config = null;
+    private String locateTag = null;
 
     public RFIDScannerThread(ReactApplicationContext context) {
         this.context = context;
@@ -427,7 +428,8 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
         shutdownAsync.executeOnExecutor(SERIAL_EXECUTOR);
     }
 
-    public void read(ReadableMap config, String locateTag) {
+    public void read(ReadableMap config) {
+        
         if (this.reading) {
             Log.e("RFID", "already reading");
             return;
@@ -440,8 +442,8 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 RFIDReader rfidReader = rfidReaderDevice.getRFIDReader();
                 try {
                     // Perform inventory
-                    if(locateTag != null){
-                        rfidReader.Actions.TagLocationing.Perform(locateTag,null,null);
+                    if(this.locateTag != null){
+                        rfidReader.Actions.TagLocationing.Perform(this.locateTag,null,null);
 
                     } else {
                         rfidReader.Actions.Inventory.perform(null, null, null);
@@ -580,6 +582,9 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
             this.dispatchEvent("SettingEvent", event);
         }
     }
+    public void locate(String tag){
+        this.locateTag = tag;
+    }
 
     public void settingBeeper(String beeperVolume) {
         String err = null;
@@ -643,11 +648,20 @@ public abstract class RFIDScannerThread extends Thread implements RfidEventsList
                 }
                 short dist = tag.LocationInfo.getRelativeDistance();
                 Log.d("RFID", "Tag relative distance " + dist);
+                
                 JSONObject tagPayload = new JSONObject();
+                try{
+                    
                     tagPayload.put("tag",tag.getTagID());
                     tagPayload.put("distance",dist);
+
+                }catch( JSONException e){
+                     Log.i("Error", "Payload json");
+                }
+                
+                
+                this.dispatchEvent("TagEvent", tagPayload.toString());
                 Log.i("RFID", "Payload = " + tagPayload);
-                this.dispatchEvent("TagEvent", tagPayload);
                 //rfidTags.pushString(tag.getTagID());
             }
             //this.dispatchEvent("TagsEvent", rfidTags);

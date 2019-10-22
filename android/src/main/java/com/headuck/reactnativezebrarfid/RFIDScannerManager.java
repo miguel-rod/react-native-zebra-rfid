@@ -20,7 +20,7 @@ public class RFIDScannerManager extends ReactContextBaseJavaModule implements Li
 
     public RFIDScannerManager(ReactApplicationContext reactContext) {
         super(reactContext);
-
+        //this.locateTag = null;
         this.context = reactContext;
         this.context.addLifecycleEventListener(this);
 
@@ -100,11 +100,17 @@ public class RFIDScannerManager extends ReactContextBaseJavaModule implements Li
             this.scannerThread.reconnect();
         }
     }
+    @ReactMethod
+    public void locate(String tag){
+        if (this.scannerThread != null) {
+            this.scannerThread.locate(tag);
+        }
+    }
 
     @ReactMethod
-    public void read(ReadableMap config,String tag) {
+    public void read(ReadableMap config) {
         if (this.scannerThread != null) {
-            this.scannerThread.read(config,tag);
+            this.scannerThread.read(config);
         }
     }
 
